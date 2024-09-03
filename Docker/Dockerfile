@@ -1,3 +1,4 @@
+# Use alpine:3.15 as base container
 FROM alpine:3.15
 
 RUN apk add --no-cache wireguard-tools iproute2 openresolv
