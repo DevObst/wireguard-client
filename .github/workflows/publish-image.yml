@@ -2,6 +2,8 @@ name: Publish image to Docker Hub
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'Docker/**'
 
 jobs:
   publish_image:
@@ -14,9 +16,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: obstdev/wireguard-client
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/wireguard-client
           tags: |
-            type=raw,value={{date 'YYYYMMDD'}}
+            type=raw,value={{date 'YYYYMMDD-HHmmss'}}
 
       - name: build
         run: |
