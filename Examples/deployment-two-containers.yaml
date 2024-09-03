@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-wireguard-client
+spec:
+  selector:
+    matchLabels:
+      app: nginx-wireguard-client
+  template:
+    metadata:
+      labels:
+        app: nginx-wireguard-client
+    spec:
+      containers:
+      - name: wireguard-client
+        image: obstdev/wireguard-client
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        env:
+        - name: WIREGUARD_PRIVATE_KEY
+          value: "yAq+Fc5qTVBGNAcX1WDa2312dsaW3WrssRZWI="
+        - name: WIREGUARD_ADDRESS
+          value: "192.168.1.101/32"
+        - name: WIREGUARD_MTU
+          value: "1400"
+        - name: WIREGUARD_PUBLIC_KEY
+          value: "c8OUIFBj4E5qTVBGNA5yLWdWPoCjJGQJmOCo="
+        - name: WIREGUARD_ENDPOINT
+          value: "1.1.1.1:51820"
+        - name: WIREGUARD_ALLOWED_IPS
+          value: "192.168.1.10/32"
+        - name: WIREGUARD_PERSISTENT_KEEPALIVE
+          value: "25"
+        - name: WIREGUARD_PRESHARED_KEY
+          value: "UBIshkyDhmKqTVBGNA5yLnQ3sebEsu2RwEU0s="
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "wg show wg0 | grep -q 'interface: wg0'"
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          failureThreshold: 3
+      - name: nginx
+        image: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
