@@ -1,0 +1,16 @@
+name: Publish image to Docker Hub
+on:
+  [workflow_dispatch]
+
+jobs:
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: action/checkout@v3
+      - name: build
+        run: |
+          docker build . -t obstdev/wireguard-client:latest
+      - name: publish
+        run: |
+          docker push obstdev/wireguard-client:latest
