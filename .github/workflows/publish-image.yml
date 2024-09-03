@@ -1,6 +1,7 @@
 name: Publish image to Docker Hub
 on:
-  [workflow_dispatch]
+  push:
+    branches: [ "main" ]
 
 jobs:
   publish_image:
@@ -8,10 +9,21 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: name/app
+          tags: |
+            type=raw,value={{date 'YYYYMMDD'}}
+
       - name: build
         run: |
-          docker build ./Docker/ -t obstdev/wireguard-client:latest
+          docker build ./Docker/ -t obstdev/wireguard-client:${{ steps.meta.outputs.tags }}
+
       - name: publish
         run: |
-          docker login -u obstdev -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push obstdev/wireguard-client:latest
+          docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push obstdev/wireguard-client:${{ steps.meta.outputs.tags }}
+
