@@ -14,16 +14,16 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: name/app
+          images: obstdev/wireguard-client
           tags: |
             type=raw,value={{date 'YYYYMMDD'}}
 
       - name: build
         run: |
-          docker build ./Docker/ -t obstdev/wireguard-client:${{ steps.meta.outputs.tags }}
+          docker build ./Docker/ -t ${{ steps.meta.outputs.tags }}
 
       - name: publish
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push obstdev/wireguard-client:${{ steps.meta.outputs.tags }}
+          docker push ${{ steps.meta.outputs.tags }}
 
