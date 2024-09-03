@@ -13,4 +13,5 @@ jobs:
           docker build . -t obstdev/wireguard-client:latest
       - name: publish
         run: |
+          docker login -u obstdev -p ${{ secrets.DOCKER_HUB_TOKEN }}
           docker push obstdev/wireguard-client:latest
